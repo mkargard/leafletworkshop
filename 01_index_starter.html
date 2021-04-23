@@ -30,7 +30,7 @@
     
     
     
-    // Add the Mapbox Streets tile layer to the map
+    // Add the Mapbox Streets tile to the map
     
 	L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
 		maxZoom: 18,
@@ -41,7 +41,38 @@
 		tileSize: 512,
 		zoomOffset: -1
 	}).addTo(mymap);
+	
+	 // loading GeoJSON file - https://www.igismap.com/add-load-geojson-file-point-polyline-polygon-map-leaflet-js/
+	$.getJSON("Census_by_Community_2019.geojson",function(data){
+		// L.geoJson function is used to parse geojson file and load on to map
+		L.geoJson(data, {
+			style: polyStyle
+		}).addTo(mymap);
+	});	
+	
+	
+	 // Define colours based on data ranges (create choropleth map)
+    function colourBreaks(d) {
+        return d > 15000 ? '#b10026' :
+                d > 10000 ? '#e31a1c' :
+                d > 7000 ? '#fc4e2a' :
+                d > 5000 ? '#fd8d3c' :
+                d > 2500 ? '#feb24c' :
+                d > 1 ? '#fed976' :
+                        '#525252';        
+    }
     
+    	
+	// Style polygons and control opacity
+	function polyStyle(feature) {
+		return {
+			weight: 1,
+			fillColor: colourBreaks(feature.properties.res_cnt),
+			color: '#FFFFFF',
+            opacity: 1,
+            fillOpacity: 0.75
+		};
+	}
     
     
     // ----------- BEGIN SECTION (Markers, circles, polygons, & popups) ------------- 
@@ -74,9 +105,6 @@
 			.setLatLng(e.latlng)
 			.setContent("You clicked the map at " + e.latlng.toString())
 			.openOn(mymap);
-	}
-
-	mymap.on('click', onMapClick);
     */
     
     
